@@ -1,13 +1,13 @@
 ARG DOCKER_HUB="docker.io"
 ARG NGINX_VERSION="1.17.6"
-ARG NODE_VERSION="16.3-alpine"
+ARG NODE_VERSION="18-alpine"
 
-FROM $DOCKER_HUB/library/node:$NODE_VERSION as build
+FROM $DOCKER_HUB/library/node:$NODE_VERSION AS build
 
 
 COPY . /workspace/
 
-ARG NPM_REGISTRY=" https://registry.npmjs.org"
+ARG NPM_REGISTRY="https://registry.npmjs.org"
 
 RUN echo "registry = \"$NPM_REGISTRY\"" > /workspace/.npmrc                              && \
     cd /workspace/                                                                       && \
