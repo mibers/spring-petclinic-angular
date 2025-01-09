@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@UsePlaywright(AddUserRecordedJUnitConfig.CustomOptions.class)
-public class AddUserRecordedJUnitConfig {
+@UsePlaywright(OwnersRecordedJUnitConfig.CustomOptions.class)
+public class OwnersRecordedJUnitConfig {
 
   public static class CustomOptions implements OptionsFactory {
     @Override
