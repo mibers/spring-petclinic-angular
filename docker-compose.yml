@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: spring-petclinic-angular:latest
+    container_name: spring-petclinic-frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    image: springcommunity/spring-petclinic-rest
+    container_name: spring-petclinic-backend
+    ports:
+      - "9966:9966"
+    restart: always
