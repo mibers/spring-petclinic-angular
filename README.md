@@ -177,11 +177,11 @@ Before running the tests make sure you are serving the app via `ng serve`.
 
 Be sure JAVA and Maven is available in your environment.
 
-Run `mvn clean test` to execute the WebUI tests via [Playwright](https://playwright.dev/).
+Run `mvn clean test` from folder `playwright` to execute the WebUI tests via [Playwright](https://playwright.dev/).
 
 Before running the tests make sure you are serving the app via `ng serve`.
 
-To view Allure web report run `mvn allure serv`
+To view Allure web report run `mvn allure serv`.
 
 
 ## Further help
