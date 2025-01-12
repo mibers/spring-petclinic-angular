@@ -19,6 +19,60 @@
       <artifactId>playwright</artifactId>
       <version>1.49.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.playwright/driver-bundle -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>driver-bundle</artifactId>
+      <version>1.49.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.playwright/driver -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>driver</artifactId>
+      <version>1.49.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.playwright/assertions -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>assertions</artifactId>
+      <version>1.17.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.playwright/parent-pom -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>parent-pom</artifactId>
+      <version>1.49.0</version>
+      <type>pom</type>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.playwright/api-generator -->
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>api-generator</artifactId>
+      <version>0.170.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.11.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.11.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-junit5</artifactId>
+      <version>2.29.1</version> <!-- Use the appropriate version -->
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/io.github.uchagani/allure-playwright-java -->
+    <dependency>
+      <groupId>io.github.uchagani</groupId>
+      <artifactId>allure-playwright-java</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>
@@ -30,6 +84,29 @@
           <source>23</source>
           <target>23</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+      </plugin>
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.14.0</version> <!-- Use the appropriate version -->
+        <configuration>
+          <!-- Specify the target directory for allure results -->
+          <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+          <!-- Specify the directory for the Allure report -->
+          <reportDirectory>${project.build.directory}/site/allure-maven-plugin</reportDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>serve</goal> <!-- This will generate and serve the report -->
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
