@@ -5,7 +5,7 @@
 ## Angular frontend for Spring Petclinic
 
 Warning: **client only**. 
-  Use REST API from backend [spring-petclinic-rest project](https://github.com/spring-petclinic/spring-petclinic-rest)
+  Use REST API from backend [spring-petclinic-rest project](https://github.com/mibers/spring-petclinic-rest)
   You need start backend server before start frontend application.
 
 ## Screenshot
@@ -172,6 +172,17 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 Before running the tests make sure you are serving the app via `ng serve`.
+
+## Running WebUI tests
+
+Be sure JAVA and Maven is available in your environment.
+
+Run `mvn clean test` to execute the WebUI tests via [Playwright](https://playwright.dev/).
+
+Before running the tests make sure you are serving the app via `ng serve`.
+
+To view Allure web report run `mvn allure serv`
+
 
 ## Further help
 
