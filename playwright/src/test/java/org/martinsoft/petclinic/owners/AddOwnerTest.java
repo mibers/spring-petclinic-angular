@@ -5,6 +5,7 @@ import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -58,6 +59,25 @@ public class AddOwnerTest {
     }
     if (playwright != null) {
       playwright.close();
+    }
+
+    try {
+      // Run the PowerShell command to restart the Docker container
+      String command = "powershell.exe docker restart petclinic-backend";
+
+      // Using ProcessBuilder to execute the command
+      ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
+      Process process = processBuilder.start();
+
+      // Wait for the command to complete
+      int exitCode = process.waitFor();
+      if (exitCode == 0) {
+        System.out.println("Docker container restarted successfully.");
+      } else {
+        System.out.println("Error restarting Docker container. Exit code: " + exitCode);
+      }
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
     }
   }
 
