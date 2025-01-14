@@ -53,7 +53,6 @@ public class AddOwnerTest {
 
   @AfterAll
   static void teardownBrowser() {
-    // Close the browser after all tests
     if (browser != null) {
       browser.close();
     }
