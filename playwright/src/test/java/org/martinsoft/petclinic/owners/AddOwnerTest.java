@@ -46,7 +46,7 @@ public class AddOwnerTest {
       String traceFilePath = "target/playwright-traces/" + traceFileName;
       context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFilePath)));
       try {
-        Allure.addAttachment("Trace for " + testInfo.getDisplayName(),
+        Allure.addAttachment(traceFileName,
           "application/zip",
           Files.newInputStream(Paths.get(traceFilePath)),
           ".zip");
