@@ -6,6 +6,7 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -42,7 +43,16 @@ public class AddOwnerTest {
   void teardown(TestInfo testInfo) {
     if (context != null) {
       String traceFileName = testInfo.getDisplayName().replace(" ", "_") + "-trace.zip";
-      context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFileName)));
+      String traceFilePath = "target/playwright-traces/" + traceFileName;
+      context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFilePath)));
+      try {
+        Allure.addAttachment("Trace for " + testInfo.getDisplayName(),
+          "application/zip",
+          Files.newInputStream(Paths.get(traceFilePath)),
+          ".zip");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     if (page != null) {
       page.close();
