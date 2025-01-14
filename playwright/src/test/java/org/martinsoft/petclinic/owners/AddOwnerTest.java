@@ -15,15 +15,20 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @Owner("martin.ibersperger@gmx.at")
 @Link(name = "OpenAPI Documentation", url = "https://github.com/spring-petclinic/spring-petclinic-angular")
 public class AddOwnerTest {
-  private Playwright playwright;
-  private Browser browser;
+  private static Playwright playwright;
+  private static Browser browser;
   private BrowserContext context;
   private Page page;
 
-  @BeforeEach
-  void setup() {
+  @BeforeAll
+  static void setupBrowser() {
     playwright = Playwright.create();
     browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(0));
+
+  }
+
+  @BeforeEach
+  void setup() {
     context = browser.newContext();
     page = context.newPage();
     context.tracing().start(new Tracing.StartOptions()
@@ -44,6 +49,11 @@ public class AddOwnerTest {
     if (context != null) {
       context.close();
     }
+  }
+
+  @AfterAll
+  static void teardownBrowser() {
+    // Close the browser after all tests
     if (browser != null) {
       browser.close();
     }
