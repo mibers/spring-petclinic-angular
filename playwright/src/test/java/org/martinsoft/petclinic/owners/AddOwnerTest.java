@@ -5,6 +5,8 @@ import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -28,12 +30,14 @@ public class AddOwnerTest {
   }
 
   @BeforeEach
-  void setup() {
+  void setup(TestInfo testInfo) {
     context = browser.newContext();
     page = context.newPage();
     context.tracing().start(new Tracing.StartOptions()
+      .setTitle(testInfo.getDisplayName())
       .setScreenshots(true)
       .setSnapshots(true)
+      .setSources(true) // set PLAYWRIGHT_JAVA_SRC="src\test\java" on the shell from where you run tests
       .setSources(true));
   }
 
@@ -41,7 +45,16 @@ public class AddOwnerTest {
   void teardown(TestInfo testInfo) {
     if (context != null) {
       String traceFileName = testInfo.getDisplayName().replace(" ", "_") + "-trace.zip";
-      context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFileName)));
+      String traceFilePath = "target/playwright-traces/" + traceFileName;
+      context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFilePath)));
+      try {
+        Allure.addAttachment(traceFileName,
+          "application/zip",
+          Files.newInputStream(Paths.get(traceFilePath)),
+          ".zip");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     if (page != null) {
       page.close();
@@ -58,6 +71,25 @@ public class AddOwnerTest {
     }
     if (playwright != null) {
       playwright.close();
+    }
+
+    try {
+      // Run the PowerShell command to restart the Docker container
+      String command = "powershell.exe docker restart petclinic-backend";
+
+      // Using ProcessBuilder to execute the command
+      ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
+      Process process = processBuilder.start();
+
+      // Wait for the command to complete
+      int exitCode = process.waitFor();
+      if (exitCode == 0) {
+        System.out.println("Docker container restarted successfully.");
+      } else {
+        System.out.println("Error restarting Docker container. Exit code: " + exitCode);
+      }
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
     }
   }
 
@@ -80,11 +112,6 @@ public class AddOwnerTest {
     page.getByLabel("Telephone").fill("2343555");
     page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add Owner")).click();
     page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(firstName + " " + lastName)).click();
-  }
-
-  public void listOwner() {
-    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Owners")).click();
-    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Search")).click();
   }
 
   @Test
