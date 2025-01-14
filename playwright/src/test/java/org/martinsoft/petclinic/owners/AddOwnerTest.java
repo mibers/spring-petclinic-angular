@@ -102,11 +102,6 @@ public class AddOwnerTest {
     page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(firstName + " " + lastName)).click();
   }
 
-  public void listOwner() {
-    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Owners")).click();
-    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Search")).click();
-  }
-
   @Test
   @DisplayName("Add new owner")
   @Description("Add new owner")
