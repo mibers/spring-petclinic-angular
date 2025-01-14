@@ -30,12 +30,14 @@ public class AddOwnerTest {
   }
 
   @BeforeEach
-  void setup() {
+  void setup(TestInfo testInfo) {
     context = browser.newContext();
     page = context.newPage();
     context.tracing().start(new Tracing.StartOptions()
+      .setTitle(testInfo.getDisplayName())
       .setScreenshots(true)
       .setSnapshots(true)
+      .setSources(true) // set PLAYWRIGHT_JAVA_SRC="src\test\java" on the shell from where you run tests
       .setSources(true));
   }
 
