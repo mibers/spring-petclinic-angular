@@ -1,15 +1,17 @@
 package org.martinsoft.petclinic.owners;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.*;
+import org.martinsoft.petclinic.pages.OwnerPage;
+import org.martinsoft.petclinic.pages.WelcomePage;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Epic("Epic: Angular WebUI petclinic")
 @Feature("Feature: OWNERS")
@@ -22,57 +24,50 @@ public class AddOwnerTest {
   private BrowserContext context;
   private Page page;
 
+  private WelcomePage welcomePage;
+  private OwnerPage ownerPage;
+
   @BeforeAll
   static void setupBrowser() {
     playwright = Playwright.create();
     browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(0));
-
   }
 
   @BeforeEach
   void setup(TestInfo testInfo) {
     context = browser.newContext();
     page = context.newPage();
+
+    welcomePage = new WelcomePage(page);
+    ownerPage = new OwnerPage(page);
+
     context.tracing().start(new Tracing.StartOptions()
       .setTitle(testInfo.getDisplayName())
       .setScreenshots(true)
       .setSnapshots(true)
-      .setSources(true) // set PLAYWRIGHT_JAVA_SRC="src\test\java" on the shell from where you run tests
       .setSources(true));
   }
 
   @AfterEach
   void teardown(TestInfo testInfo) {
-    if (context != null) {
-      String traceFileName = testInfo.getDisplayName().replace(" ", "_") + "-trace.zip";
-      String traceFilePath = "target/playwright-traces/" + traceFileName;
-      context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFilePath)));
-      try {
-        Allure.addAttachment(traceFileName,
-          "application/zip",
-          Files.newInputStream(Paths.get(traceFilePath)),
-          ".zip");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    String traceFileName = testInfo.getDisplayName().replace(" ", "_") + "-trace.zip";
+    String traceFilePath = "target/playwright-traces/" + traceFileName;
+
+    context.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(traceFilePath)));
+    try {
+      Allure.addAttachment(traceFileName, "application/zip", Files.newInputStream(Paths.get(traceFilePath)), ".zip");
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    if (page != null) {
-      page.close();
-    }
-    if (context != null) {
-      context.close();
-    }
+
+    if (page != null) page.close();
+    if (context != null) context.close();
   }
 
   @AfterAll
   static void teardownBrowser() {
-    if (browser != null) {
-      browser.close();
-    }
-    if (playwright != null) {
-      playwright.close();
-    }
-
+    if (browser != null) browser.close();
+    if (playwright != null) playwright.close();
     try {
       // Run the PowerShell command to restart the Docker container
       String command = "powershell.exe docker restart petclinic-backend";
@@ -93,35 +88,17 @@ public class AddOwnerTest {
     }
   }
 
-  public void navigateToPage() {
-    page.navigate("http://localhost:4200/petclinic/welcome");
-  }
-
-  public void addOwner(String firstName, String lastName) {
-    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Owners")).click();
-    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Add New")).click();
-    page.getByLabel("First Name").click();
-    page.getByLabel("First Name").fill(firstName);
-    page.getByLabel("Last Name").click();
-    page.getByLabel("Last Name").fill(lastName);
-    page.getByLabel("Address").click();
-    page.getByLabel("Address").fill("Rennweg 1");
-    page.getByLabel("City").click();
-    page.getByLabel("City").fill("Wien");
-    page.getByLabel("Telephone").click();
-    page.getByLabel("Telephone").fill("2343555");
-    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add Owner")).click();
-    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(firstName + " " + lastName)).click();
-  }
-
   @Test
   @DisplayName("Add new owner")
   @Description("Add new owner")
   @Issue("Link to Xray here...")
   void addNewOwner() {
-    navigateToPage();
-    addOwner("Max", "Hofer");
-    assertThat(page.getByText("Max Hofer")).isVisible();
+    welcomePage.navigateToWelcomePage();
+    ownerPage.navigateToOwners();
+    ownerPage.clickAddNewOwner();
+    ownerPage.fillOwnerDetails("Max", "Hofer", "Rennweg 1", "Wien", "2343555");
+    ownerPage.submitOwnerForm();
+    assertTrue(ownerPage.isOwnerVisible("Max Hofer"));
   }
 
   @Test
@@ -129,9 +106,12 @@ public class AddOwnerTest {
   @Description("Add new owner 1")
   @Issue("Link to Xray here...")
   void addNewOwner1() {
-    navigateToPage();
-    addOwner("Moritz", "Pichler");
-    assertThat(page.getByText("Moritz Pichler")).isVisible();
+    welcomePage.navigateToWelcomePage();
+    ownerPage.navigateToOwners();
+    ownerPage.clickAddNewOwner();
+    ownerPage.fillOwnerDetails("Moritz", "Pichler", "Rennweg 1", "Wien", "2343555");
+    ownerPage.submitOwnerForm();
+    assertTrue(ownerPage.isOwnerVisible("Moritz Pichler"));
   }
 
   @Test
@@ -139,9 +119,12 @@ public class AddOwnerTest {
   @Description("Add new owner 2")
   @Issue("Link to Xray here...")
   void addNewOwner2() {
-    navigateToPage();
-    addOwner("Sigmund", "Freund");
+    welcomePage.navigateToWelcomePage();
+    ownerPage.navigateToOwners();
+    ownerPage.clickAddNewOwner();
+    ownerPage.fillOwnerDetails("Sigmund", "Freund", "Rennweg 1", "Wien", "2343555");
+    ownerPage.submitOwnerForm();
     assertThat(page.getByText("Sigmund Freund")).isVisible();
+//    assertTrue(ownerPage.isOwnerVisible("Sigmund Freund"));
   }
-
 }
